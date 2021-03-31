@@ -44,5 +44,12 @@ def bmtc_add(bus_stop, lat, long):
     }
 
 
+@app.route('/', methods=["GET"])
+def home():
+    return {
+        "result": "MY BMTC"
+    }
+
+
 if __name__ == "__main__":
     app.run()
