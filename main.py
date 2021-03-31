@@ -8,6 +8,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') or 'sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+LATITUDE = 0.00090053582
+LONGITUDE = 0.00113804251
+
 
 class BusStops(db.Model):
     __tablename__ = 'BusStops'
@@ -29,18 +32,28 @@ def generate_id(table_data: db.Model):
         generate_id(table_data)
 
 
-@app.route('/bmtc/add/<bus_stop>/<lat>/<long>', methods=["GET"])
+@app.route('/bmtc/add/<bus_stop>/<lat>/<long>', methods=["POST"])
 def bmtc_add(bus_stop, lat, long):
     uid = generate_id(BusStops)
-    bus_stop_data = BusStops(id=uid,
-                             bus_stop=bus_stop,
-                             latitude=float(lat),
-                             longitude=float(long),
-                             )
+    bus_stop_data = BusStops(
+        id=uid,
+        bus_stop=bus_stop,
+        latitude=float(lat),
+        longitude=float(long),
+    )
     db.session.add(bus_stop_data)
     db.session.commit()
     return {
         "result": True
+    }
+
+
+@app.route('/bmtc/<lat>/<long>', methods=["GET"])
+def bmtc_bus_stops(lat: float, long: float):
+    all_near_by_bus_stop = []
+    result = BusStops.query.filter_by()
+    return {
+        "bus_stops": all_near_by_bus_stop
     }
 
 
