@@ -1,7 +1,8 @@
 import uuid
 from os import environ
-from flask import Flask, request
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import and_
 
 app = Flask('__name__')
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') or 'sqlite:///mybmtc.db'
@@ -48,11 +49,39 @@ def bmtc_add(bus_stop, lat, long):
     }
 
 
-@app.route('/bmtc/<lat>/<long>', methods=["GET"])
-def bmtc_bus_stops(lat: float, long: float):
-    all_near_by_bus_stop = []
-    result = BusStops.query.filter_by()
+@app.route('/bmtc/delete/<bus_stop_id>', methods=["POST"])
+def bmtc_delete(bus_stop_id):
+    BusStops.query.delete_by(id=bus_stop_id)
+    db.session.commit()
     return {
+        "result": True
+    }
+
+
+@app.route('/bmtc/<lat>/<long>', methods=["GET"])
+def bmtc_bus_stops(lat, long):
+    radius = 1
+    all_near_by_bus_stop = []
+    while len(all_near_by_bus_stop) < 5:
+        all_near_by_bus_stop = []
+        radius += 1
+        up_lim_lat = float(lat) + LATITUDE * radius
+        up_lim_long = float(long) + LONGITUDE * radius
+        lower_lim_lat = float(lat) - LATITUDE * radius
+        lower_lim_long = float(long) - LONGITUDE * radius
+        result = BusStops.query.filter(and_(
+            lower_lim_lat <= BusStops.latitude,
+            up_lim_lat >= BusStops.latitude,
+            lower_lim_long <= BusStops.longitude,
+            up_lim_long >= BusStops.longitude
+        )).all()
+        for data in result:
+            temp = {"id": data.id, "bus_stop_name": data.bus_stop, "latitude": data.latitude,
+                    "longitude": data.longitude}
+            all_near_by_bus_stop.append(temp)
+
+    return {
+        "radius": radius * 100,
         "bus_stops": all_near_by_bus_stop
     }
 
@@ -65,4 +94,4 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
