@@ -62,7 +62,7 @@ def bmtc_delete(bus_stop_id):
 def bmtc_bus_stops(lat, long):
     radius = 1
     all_near_by_bus_stop = []
-    while len(all_near_by_bus_stop) < 5:
+    while len(all_near_by_bus_stop) < 10:
         all_near_by_bus_stop = []
         radius += 1
         up_lim_lat = float(lat) + LATITUDE * radius
