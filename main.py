@@ -1,8 +1,9 @@
 import uuid
 from os import environ
-from flask import Flask
+import json
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import and_
+from sqlalchemy import and_, ForeignKey
 
 app = Flask('__name__')
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') or 'sqlite:///mybmtc.db'
@@ -19,6 +20,13 @@ class BusStops(db.Model):
     bus_stop = db.Column(db.String(200), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
+
+
+class BusRoute(db.Model):
+    __tablename__ = 'BusRoute'
+    id = db.Column(db.String(100), primary_key=True)
+    bus_no = db.Column(db.String(20), nullable=False)
+    list_of_bus_stops = db.Column(db.JSON(ForeignKey('BusStops.id')), nullable=False)
 
 
 db.create_all()
@@ -49,9 +57,38 @@ def bmtc_add(bus_stop, lat, long):
     }
 
 
-@app.route('/bmtc/delete/<bus_stop_id>', methods=["POST"])
+@app.route('/bmtc/<bus_stop>', methods=["GET"])
+def bmtc_get_bus_id(bus_stop):
+    results = BusStops.query.filter_by(bus_stop=bus_stop).all()
+    id_list = []
+    for result in results:
+        id_list.append(result.id)
+    return {
+        "id": id_list
+    }
+
+
+@app.route('/bmtc/add/bus_route', methods=["POST"])
+def bmtc_add_bus_route():
+    print(request.form.get)
+    bus_no = request.form.get('bus_no')
+    list_of_bus_stops = request.form.get('list_of_bus_stops')
+    uid = generate_id(BusRoute)
+    user_data = BusRoute(
+        id=uid,
+        bus_no=bus_no,
+        list_of_bus_stops=list_of_bus_stops,
+    )
+    db.session.add(user_data)
+    db.session.commit()
+    return {
+        "bus_route_id": uid,
+    }
+
+
+@app.route('/bmtc/delete/<bus_stop_id>', methods=["DELETE"])
 def bmtc_delete(bus_stop_id):
-    BusStops.query.delete_by(id=bus_stop_id)
+    BusStops.query.filter_by(id=bus_stop_id).delete()
     db.session.commit()
     return {
         "result": True
