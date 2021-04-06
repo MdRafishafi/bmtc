@@ -70,7 +70,6 @@ def bmtc_get_bus_id(bus_stop):
 
 @app.route('/bmtc/add/bus_route', methods=["POST"])
 def bmtc_add_bus_route():
-    print(request.form.get)
     bus_no = request.form.get('bus_no')
     list_of_bus_stops = request.form.get('list_of_bus_stops')
     uid = generate_id(BusRoute)
@@ -83,6 +82,38 @@ def bmtc_add_bus_route():
     db.session.commit()
     return {
         "bus_route_id": uid,
+    }
+
+
+@app.route('/bmtc/get/route_map/<bus_route_no>', methods=["GET"])
+def bmtc_get_bus_route_by_bus_no(bus_route_no):
+    bus_route: BusRoute = BusRoute.query.filter_by(bus_no=bus_route_no).first()
+    return {
+        "id": bus_route.id,
+        "bus_route_no": bus_route.bus_no,
+        "bus_stops": json.loads(bus_route.list_of_bus_stops)
+    }
+
+
+@app.route('/bmtc/get/all/route_no', methods=["GET"])
+def bmtc_get_all_bus_route_no():
+    bus_route = db.session.query(BusRoute.id, BusRoute.bus_no).all()
+    all_route_no = []
+    for data in bus_route:
+        all_route_no.append({"id": data[0], "bus_route_no": data[1]})
+    return {
+        "bus_route_no": all_route_no
+    }
+
+
+@app.route('/bmtc/get/all/bus_stops', methods=["GET"])
+def bmtc_get_all_bus_stops():
+    bus_route = db.session.query(BusStops.id, BusStops.bus_stop).all()
+    all_route_no = []
+    for data in bus_route:
+        all_route_no.append({"id": data[0], "bus_route_no": data[1]})
+    return {
+        "bus_stops": all_route_no
     }
 
 
