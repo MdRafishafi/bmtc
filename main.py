@@ -85,13 +85,22 @@ def bmtc_add_bus_route():
     }
 
 
-@app.route('/bmtc/get/route_map/<bus_route_no>', methods=["GET"])
-def bmtc_get_bus_route_by_bus_no(bus_route_no):
-    bus_route: BusRoute = BusRoute.query.filter_by(bus_no=bus_route_no).first()
+@app.route('/bmtc/get/route_map/<bus_route_no_id>', methods=["GET"])
+def bmtc_get_bus_route_by_bus_no(bus_route_no_id):
+    bus_route: BusRoute = BusRoute.query.filter_by(id=bus_route_no_id).first()
+    list_of_bus_stops = []
+    for bus_stop_data in json.loads(bus_route.list_of_bus_stops):
+        bus_stop: BusStops = BusStops.query.filter_by(id=bus_stop_data).first()
+        list_of_bus_stops.append({
+            "id": bus_stop.id,
+            "bus_stop_name": bus_stop.bus_stop,
+            "latitude": bus_stop.latitude,
+            "longitude": bus_stop.longitude
+        })
     return {
         "id": bus_route.id,
         "bus_route_no": bus_route.bus_no,
-        "bus_stops": json.loads(bus_route.list_of_bus_stops)
+        "bus_stops": list_of_bus_stops
     }
 
 
