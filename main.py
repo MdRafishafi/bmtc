@@ -80,7 +80,7 @@ def bmtc_add_bus_route():
     print(bus_no)
     print(list_of_bus_stops_name)
     print(distance)
-    result = BusRoute.query.filter_by(bus_no=bus_no).first()
+    result = db.session.query(BusRoute.id).filter_by(bus_no=bus_no).first()
     print(result)
     if result:
         return {
