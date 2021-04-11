@@ -77,7 +77,11 @@ def bmtc_add_bus_route():
     bus_no = request.form.get('bus_no')
     list_of_bus_stops_name = json.loads(request.form.get('list_of_bus_stops'))
     distance = request.form.get('distance')
+    print(bus_no)
+    print(list_of_bus_stops_name)
+    print(distance)
     result = BusRoute.query.filter_by(bus_no=bus_no).first()
+    print(result)
     if result:
         return {
             "error": 300,
