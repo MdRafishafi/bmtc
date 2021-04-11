@@ -36,8 +36,7 @@ db.create_all()
 
 def generate_id(table_data: db.Model):
     uid = str(uuid.uuid4()).replace('-', '')
-    print(uid)
-    result = db.session.query(table_data.id).filter_by(id=uuid).first()
+    result = table_data.query.filter_by(id=uid).first()
     if not result:
         return uid
     else:
@@ -106,7 +105,6 @@ def bmtc_add_bus_route():
                 coords_end = coords_2
             list_of_bus_stops[index + 1]["distance"] = f"{round(geodesic(coords_1, coords_2).km, 4)} M"
         uid = generate_id(BusRoute)
-        print(uid)
         user_data = BusRoute(
             id=uid,
             bus_no=bus_no,
