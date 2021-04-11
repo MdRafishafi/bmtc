@@ -8,7 +8,7 @@ from geopy.distance import geodesic
 
 app = Flask('__name__')
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') or 'sqlite:///mybmtc.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 LATITUDE = 0.00090053582
@@ -37,7 +37,7 @@ db.create_all()
 def generate_id(table_data: db.Model):
     uid = str(uuid.uuid4()).replace('-', '')
     print(uid)
-    result = table_data.query.filter_by(id=uid).first()
+    result = db.session.query(table_data.id).filter_by(id=uuid).first()
     if not result:
         return uid
     else:
