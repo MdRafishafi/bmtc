@@ -36,6 +36,7 @@ db.create_all()
 
 def generate_id(table_data: db.Model):
     uid = str(uuid.uuid4()).replace('-', '')
+    print(uid)
     result = table_data.query.filter_by(id=uid).first()
     if not result:
         return uid
@@ -77,11 +78,7 @@ def bmtc_add_bus_route():
     bus_no = request.form.get('bus_no')
     list_of_bus_stops_name = json.loads(request.form.get('list_of_bus_stops'))
     distance = request.form.get('distance')
-    print(bus_no)
-    print(list_of_bus_stops_name)
-    print(distance)
     result = db.session.query(BusRoute.id).filter_by(bus_no=bus_no).first()
-    print(result)
     if result:
         return {
             "error": 300,
@@ -109,10 +106,11 @@ def bmtc_add_bus_route():
                 coords_end = coords_2
             list_of_bus_stops[index + 1]["distance"] = f"{round(geodesic(coords_1, coords_2).km, 4)} M"
         uid = generate_id(BusRoute)
+        print(uid)
         user_data = BusRoute(
             id=uid,
             bus_no=bus_no,
-            list_of_bus_stops=list_of_bus_stops,
+            list_of_bus_stops=json.dumps(list_of_bus_stops),
             distance=distance if distance else f"{round(geodesic(coords_start, coords_end).km, 3)} KM"
         )
         db.session.add(user_data)
