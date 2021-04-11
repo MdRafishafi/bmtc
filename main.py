@@ -2,10 +2,9 @@ import uuid
 from os import environ
 import json
 
-from docutils.nodes import table
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import and_, ForeignKey
+from sqlalchemy import and_
 from geopy.distance import geodesic
 
 app = Flask('__name__')
@@ -39,7 +38,6 @@ db.create_all()
 def generate_id(table_data: db.Model):
     uid = str(uuid.uuid4()).replace('-', '')
     result = table_data.query.filter_by(id=uid).first()
-    print(result)
     if not result:
         return uid
     else:
