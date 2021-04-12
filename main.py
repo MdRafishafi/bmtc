@@ -18,7 +18,7 @@ LONGITUDE = 0.00113804251
 
 class BusStops(db.Model):
     __tablename__ = 'BusStops'
-    id = db.Column(db.String(100), primary_key=True)
+    id = db.Column(db.String(32), primary_key=True)
     bus_stop = db.Column(db.String(200), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
@@ -26,7 +26,7 @@ class BusStops(db.Model):
 
 class BusRoute(db.Model):
     __tablename__ = 'BusRoute'
-    id = db.Column(db.String(100), primary_key=True)
+    id = db.Column(db.String(32), primary_key=True)
     bus_no = db.Column(db.String(20), nullable=False)
     distance = db.Column(db.String(10), nullable=False)
     list_of_bus_stops = db.Column(db.JSON(), nullable=False)
