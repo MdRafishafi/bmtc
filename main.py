@@ -109,7 +109,7 @@ def bmtc_add_bus_route():
         user_data = BusRoute(
             id=uid,
             bus_no=bus_no,
-            list_of_bus_stops=json.dumps(list_of_bus_stops),
+            list_of_bus_stops=list_of_bus_stops,
             distance=distance if distance else f"{round(geodesic(coords_start, coords_end).km, 3)} KM"
         )
         db.session.add(user_data)
@@ -134,14 +134,17 @@ def bmtc_get_bus_id(bus_stop_id):
 def bmtc_get_bus_route_by_bus_no(bus_route_no_id):
     bus_route: BusRoute = BusRoute.query.filter_by(id=bus_route_no_id).first()
     list_of_bus_stops = []
-    for bus_stop_data in json.loads(bus_route.list_of_bus_stops):
-        bus_stop: BusStops = BusStops.query.filter_by(id=bus_stop_data).first()
-        list_of_bus_stops.append({
+    for bus_stop_data in bus_route.list_of_bus_stops:
+        bus_stop: BusStops = BusStops.query.filter_by(id=bus_stop_data["id"]).first()
+        temp = {
             "id": bus_stop.id,
             "bus_stop_name": bus_stop.bus_stop,
             "latitude": bus_stop.latitude,
             "longitude": bus_stop.longitude
-        })
+        }
+        if "distance" in bus_stop_data.keys():
+            temp["distance"] = bus_stop_data["distance"]
+        list_of_bus_stops.append(temp)
     return {
         "id": bus_route.id,
         "bus_route_no": bus_route.bus_no,
