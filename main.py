@@ -159,7 +159,9 @@ def bmtc_get_all_bus_route_no(starting_letter):
     for data in bus_route:
         if str(data[1]).lower().startswith(starting_letter):
             all_route_no.append({"id": data[0], "bus_route_no": data[1]})
-    return all_route_no
+    return {
+	"bus_no":all_route_no
+    }
 
 
 @app.route('/bmtc/search/bus-stop/by-starting-letter/<starting_letter>', methods=["GET"])
