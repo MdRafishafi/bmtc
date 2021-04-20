@@ -160,7 +160,7 @@ def bmtc_get_all_bus_route_no(starting_letter):
         if str(data[1]).lower().startswith(starting_letter):
             all_route_no.append({"id": data[0], "bus_route_no": data[1]})
     return {
-	"bus_no":all_route_no
+        "bus_no": all_route_no
     }
 
 
@@ -170,7 +170,7 @@ def bmtc_get_all_bus_stops(starting_letter):
     all_route_no = []
     for data in bus_route:
         if str(data[1]).lower().startswith(starting_letter):
-            all_route_no.append({"id": data[0], "bus_route_no": data[1]})
+            all_route_no.append({"id": data[0], "bus_stop": data[1]})
     return {
         "bus_stops": all_route_no
     }
