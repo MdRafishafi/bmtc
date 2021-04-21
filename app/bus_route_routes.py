@@ -13,9 +13,8 @@ def bmtc_add_bus_route():
     result = db.session.query(brd.BusRoute.id).filter_by(bus_no=bus_no).first()
     if result:
         return {
-            "error": 300,
             "message": "bus stop already exist"
-        }
+        }, 409
     else:
         list_of_bus_stops = []
         for bus_stop in list_of_bus_stops_name:
@@ -24,9 +23,8 @@ def bmtc_add_bus_route():
                 list_of_bus_stops.append({"bus_stop_id": bus_stop_result.id})
             else:
                 return {
-                    "error": 300,
                     "message": f"{bus_stop} do not exist in Bus Stop list"
-                }
+                }, 404
         for index in range(len(list_of_bus_stops) - 1):
             bus_point_1: bsd.BusStops = bsd.BusStops.query.filter_by(id=list_of_bus_stops[index]["bus_stop_id"]).first()
             bus_point_2: bsd.BusStops = bsd.BusStops.query.filter_by(
@@ -55,6 +53,10 @@ def bmtc_add_bus_route():
 @app.route('/bmtc/search/bus-route-no/<bus_route_no_id>', methods=["GET"])
 def bmtc_get_bus_route_by_bus_no(bus_route_no_id):
     bus_route: brd.BusRoute = brd.BusRoute.query.filter_by(id=bus_route_no_id).first()
+    if not bus_route:
+        return {
+            "message": "Bus Route is not found"
+        }, 404
     list_of_bus_stops = []
     for bus_stop_data in bus_route.list_of_bus_stops:
         bus_stop: bsd.BusStops = bsd.BusStops.query.filter_by(id=bus_stop_data["id"]).first()
@@ -69,8 +71,8 @@ def bmtc_get_bus_route_by_bus_no(bus_route_no_id):
         list_of_bus_stops.append(temp)
     return {
         "id": bus_route.id,
-        "bus_route_no": bus_route.bus_no,
-        "bus_stops": list_of_bus_stops
+        "bus_no": bus_route.bus_no,
+        "list_of_bus_stops": list_of_bus_stops
     }
 
 
@@ -82,5 +84,5 @@ def bmtc_get_all_bus_route_no(starting_letter):
         if str(data[1]).lower().startswith(starting_letter):
             all_route_no.append({"id": data[0], "bus_route_no": data[1]})
     return {
-        "bus_no": all_route_no
+        "list_of_bus_no": all_route_no
     }
