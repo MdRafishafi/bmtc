@@ -29,8 +29,8 @@ def bmtc_add_bus_route():
             bus_point_1: bsd.BusStops = bsd.BusStops.query.filter_by(id=list_of_bus_stops[index]["bus_stop_id"]).first()
             bus_point_2: bsd.BusStops = bsd.BusStops.query.filter_by(
                 id=list_of_bus_stops[index + 1]["bus_stop_id"]).first()
-            coords_1 = (bus_point_1.latitude, bus_point_1.latitude)
-            coords_2 = (bus_point_2.latitude, bus_point_2.latitude)
+            coords_1 = (bus_point_1.latitude, bus_point_1.longitude)
+            coords_2 = (bus_point_2.latitude, bus_point_2.longitude)
             if index == 0:
                 coords_start = coords_1
             if index + 1 == len(list_of_bus_stops) - 1:

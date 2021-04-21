@@ -12,9 +12,9 @@ LONGITUDE = 0.00113804251
 def bmtc_add():
     uid = gids.generate_id(bsd.BusStops)
     bus_stop = request.form.get('bus_stop')
-    lat = request.form.get('lat')
-    long = request.form.get('long')
-    result = bsd.BusStops.query.filter_by(latitude=lat, longitude=long).first()
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+    result = bsd.BusStops.query.filter_by(latitude=latitude, longitude=longitude).first()
     if result:
         return {
                    "message": "bus stop already exist"
@@ -23,16 +23,16 @@ def bmtc_add():
         bus_stop_data = bsd.BusStops(
             id=uid,
             bus_stop=bus_stop,
-            latitude=float(lat),
-            longitude=float(long),
+            latitude=float(latitude),
+            longitude=float(longitude),
         )
         db.session.add(bus_stop_data)
         db.session.commit()
     return {
         "id": uid,
         "bus_stop": bus_stop,
-        "lat": lat,
-        "long": long
+        "latitude": latitude,
+        "longitude": longitude
     }
 
 
@@ -46,8 +46,8 @@ def bmtc_get_bus_id(bus_stop_id):
     return {
         "id": result.id,
         "bus_stop": result.bus_stop,
-        "lat": result.latitude,
-        "long": result.longitude
+        "latitude": result.latitude,
+        "longitude": result.longitude
     }
 
 
@@ -62,7 +62,7 @@ def bmtc_get_all_bus_stops(starting_letter: str):
     data: bsd.BusStops
     for data in bus_route:
         if str(data.bus_stop).lower().startswith(starting_letter.lower()):
-            all_route_no.append({"id": data.id, "bus_stop": data.bus_stop, "lat": data.latitude, "long": data.longitude})
+            all_route_no.append({"id": data.id, "bus_stop": data.bus_stop, "latitude": data.latitude, "longitude": data.longitude})
     return {
         "list_of_bus_stops": all_route_no
     }
@@ -82,23 +82,23 @@ def bmtc_delete(bus_stop_id):
                }, 404
 
 
-@app.route('/bmtc/<lat>/<long>', methods=["GET"])
-def bmtc_bus_stops(lat, long):
+@app.route('/bmtc/<latitude>/<longitude>', methods=["GET"])
+def bmtc_bus_stops(latitude, longitude):
     try:
         radius = 1
         all_near_by_bus_stop = []
         while len(all_near_by_bus_stop) < 10:
             all_near_by_bus_stop = []
             radius += 1
-            up_lim_lat = float(lat) + LATITUDE * radius
-            up_lim_long = float(long) + LONGITUDE * radius
-            lower_lim_lat = float(lat) - LATITUDE * radius
-            lower_lim_long = float(long) - LONGITUDE * radius
+            up_lim_latitude = float(latitude) + LATITUDE * radius
+            up_lim_longitude = float(longitude) + LONGITUDE * radius
+            lower_lim_latitude = float(latitude) - LATITUDE * radius
+            lower_lim_longitude = float(longitude) - LONGITUDE * radius
             result = bsd.BusStops.query.filter(and_(
-                lower_lim_lat <= bsd.BusStops.latitude,
-                up_lim_lat >= bsd.BusStops.latitude,
-                lower_lim_long <= bsd.BusStops.longitude,
-                up_lim_long >= bsd.BusStops.longitude
+                lower_lim_latitude <= bsd.BusStops.latitude,
+                up_lim_latitude >= bsd.BusStops.latitude,
+                lower_lim_longitude <= bsd.BusStops.longitude,
+                up_lim_longitude >= bsd.BusStops.longitude
             )).all()
             for data in result:
                 all_near_by_bus_stop.append({"id": data.id, "bus_stop_name": data.bus_stop, "latitude": data.latitude,
