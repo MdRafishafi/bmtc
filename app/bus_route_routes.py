@@ -62,7 +62,7 @@ def bmtc_get_bus_route_by_bus_no(bus_route_no_id):
         bus_stop: bsd.BusStops = bsd.BusStops.query.filter_by(id=bus_stop_data["id"]).first()
         temp = {
             "id": bus_stop.id,
-            "bus_stop_name": bus_stop.bus_stop,
+            "bus_stop": bus_stop.bus_stop,
             "latitude": bus_stop.latitude,
             "longitude": bus_stop.longitude
         }
