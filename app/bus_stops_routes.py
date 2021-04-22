@@ -53,7 +53,7 @@ def bmtc_get_bus_id(bus_stop_id):
 
 @app.route('/bmtc/search/bus-stop/by-starting-letter/<starting_letter>', methods=["GET"])
 def bmtc_get_all_bus_stops(starting_letter: str):
-    bus_route = db.session.query.all()
+    bus_route = db.session.query(bsd.BusStops).all()
     if not bus_route:
         return {
                    "message": f"Bus Stop Starting with {starting_letter} letter is not found"

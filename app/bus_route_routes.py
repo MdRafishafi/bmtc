@@ -63,8 +63,6 @@ def bmtc_get_bus_route_by_bus_no(bus_route_no_id):
         temp = {
             "id": bus_stop.id,
             "bus_stop": bus_stop.bus_stop,
-            "latitude": bus_stop.latitude,
-            "longitude": bus_stop.longitude
         }
         if "distance" in bus_stop_data.keys():
             temp["distance"] = bus_stop_data["distance"]
