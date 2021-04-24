@@ -101,7 +101,7 @@ def bmtc_bus_stops(latitude, longitude):
                 up_lim_longitude >= bsd.BusStops.longitude
             )).all()
             for data in result:
-                all_near_by_bus_stop.append({"id": data.id, "bus_stop_name": data.bus_stop, "latitude": data.latitude,
+                all_near_by_bus_stop.append({"id": data.id, "bus_stop": data.bus_stop, "latitude": data.latitude,
                                              "longitude": data.longitude})
 
         return {
